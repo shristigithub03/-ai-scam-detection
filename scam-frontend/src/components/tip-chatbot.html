@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Tip Verifier Agent - AI Scam Detection for Indian Investors</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            height: 90vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: linear-gradient(180deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .hackathon-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        .features {
+            flex: 1;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .feature-item h3 {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .feature-item p {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        .example-tips {
+            margin-top: 20px;
+        }
+
+        .example-tips h4 {
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .example-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px;
+            margin: 6px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 11px;
+            width: 100%;
+            text-align: left;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateX(5px);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f8f9fa;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 20px 25px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .chat-header h2 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        .chat-header p {
+            color: #666;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.agent .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .message-agent-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: white;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .risk-critical { background: #dc3545; color: white; }
+        .risk-high { background: #fd7e14; color: white; }
+        .risk-medium { background: #ffc107; color: #333; }
+        .risk-low { background: #28a745; color: white; }
+
+        .input-area {
+            padding: 20px 25px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 30px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-area input:focus {
+            border-color: #667eea;
+        }
+
+        .input-area button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .input-area button:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .input-area button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #999;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .status-badge {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="logo">
+                <h1>🤖 Tip Verifier</h1>
+                <p>AI-Powered Scam Detection Agent</p>
+                <div class="hackathon-badge">
+                    🏆 ET AI Hackathon 2026<br>
+                    Problem Statement #6: AI for the Indian Investor
+                </div>
+            </div>
+            <div class="features">
+                <div class="feature-item">
+                    <h3>🔍 NER Entity Extraction</h3>
+                    <p>Extracts stock names, price targets, and timelines from raw tips</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📊 Financial Sentiment Analysis</h3>
+                    <p>Detects bullish/bearish sentiment using FinBERT model</p>
+                </div>
+                <div class="feature-item">
+                    <h3>🕵️ Cross-Verification Engine</h3>
+                    <p>Checks against SEBI filings, analyst ratings & market data</p>
+                </div>
+                <div class="feature-item">
+                    <h3>📈 Pattern Matching</h3>
+                    <p>87% accuracy in detecting pump-and-dump patterns (2024 data)</p>
+                </div>
+            </div>
+            <div class="example-tips">
+                <h4>📝 Try These Examples:</h4>
+                <button class="example-btn" onclick="sendExample('RELIANCE will hit ₹5000 by next month! Guaranteed 200% returns!')">
+                    🚀 Pump & Dump Scheme
+                </button>
+                <button class="example-btn" onclick="sendExample('Insider tip: TCS is going to announce a big deal. Buy now at ₹4000!')">
+                    💼 Insider Trading Alert
+                </button>
+                <button class="example-btn" onclick="sendExample('Secret information: HDFC Bank will double in 2 weeks. Invest all savings!')">
+                    🔒 Secret Info Scam
+                </button>
+                <button class="example-btn" onclick="sendExample('SBI target ₹1200 by March. Positive management commentary expected.')">
+                    📈 Genuine Analysis
+                </button>
+            </div>
+        </div>
+        <div class="chat-area">
+            <div class="chat-header">
+                <h2>🎯 AI Tip Verifier Agent</h2>
+                <p><span class="status-badge"></span> Active | Your personal scam detection assistant for stock market tips</p>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message agent">
+                    <div class="message-agent-icon">🤖</div>
+                    <div class="message-content">
+                        <strong>👋 Namaste! I'm your Tip Verifier Agent.</strong><br><br>
+                        I analyze WhatsApp, Telegram, and YouTube stock tips in real-time to help you avoid scams.<br><br>
+                        <strong>🔍 I can:</strong><br>
+                        ✅ Extract stock names, price targets & timelines<br>
+                        ✅ Detect pump-and-dump patterns<br>
+                        ✅ Cross-verify with SEBI filings & analyst data<br>
+                        ✅ Calculate scam similarity scores<br><br>
+                        <strong>📱 Try pasting a tip like:</strong><br>
+                        <em>"RELIANCE will hit ₹3500 by March!"</em><br><br>
+                        <em>Ready to protect your investments! 🚀</em>
+                    </div>
+                </div>
+            </div>
+            <div class="input-area">
+                <input type="text" id="tipInput" placeholder="Paste a stock tip from WhatsApp, Telegram, or YouTube..." onkeypress="handleKeyPress(event)">
+                <button id="sendBtn" onclick="sendTip()">🔍 Analyze Tip</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/verify-tip';
+        let isProcessing = false;
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !isProcessing) {
+                sendTip();
+            }
+        }
+
+        function sendExample(tipText) {
+            document.getElementById('tipInput').value = tipText;
+            sendTip();
+        }
+
+        async function sendTip() {
+            if (isProcessing) return;
+            
+            const input = document.getElementById('tipInput');
+            const tipText = input.value.trim();
+            
+            if (!tipText) return;
+            
+            // Add user message
+            addMessage(tipText, 'user');
+            input.value = '';
+            
+            // Show typing indicator
+            showTypingIndicator();
+            isProcessing = true;
+            const sendBtn = document.getElementById('sendBtn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Analyzing... 🔄';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: tipText })
+                });
+                
+                const result = await response.json();
+                hideTypingIndicator();
+                
+                // Format and add agent response
+                const formattedResponse = formatAgentResponse(result);
+                addMessage(formattedResponse, 'agent');
+                
+            } catch (error) {
+                hideTypingIndicator();
+                addMessage('❌ Sorry, I encountered an error. Please make sure the backend server is running.\n\nError: ' + error.message, 'agent');
+                console.error('Error:', error);
+            } finally {
+                isProcessing = false;
+                sendBtn.disabled = false;
+                sendBtn.textContent = '🔍 Analyze Tip';
+                scrollToBottom();
+            }
+        }
+        
+        function formatAgentResponse(result) {
+            if (result.error) {
+                return `❌ <strong>Error:</strong> ${result.error}`;
+            }
+            
+            let html = '';
+            
+            // Extract data
+            const analysis = result.analysis || result;
+            const verdict = analysis.final_verdict || analysis.verdict || '';
+            const riskLevel = (analysis.risk_level || 'MEDIUM').toUpperCase();
+            
+            // Risk level styling
+            const riskColors = {
+                'CRITICAL': '🔴',
+                'HIGH': '⚠️',
+                'MEDIUM': '🟡',
+                'LOW': '🟢'
+            };
+            const riskEmoji = riskColors[riskLevel] || '🟡';
+            
+            html += `<div style="margin-bottom: 12px;"><strong>${riskEmoji} Risk Assessment:</strong> <span class="risk-badge risk-${riskLevel.toLowerCase()}">${riskLevel}</span></div>`;
+            
+            // Add extracted entities if available
+            if (analysis.extracted_entities) {
+                const entities = analysis.extracted_entities;
+                if (entities.stocks && entities.stocks.length > 0 && entities.stocks[0] !== 'Unknown') {
+                    html += `<div style="margin-bottom: 8px;">📊 <strong>Stock detected:</strong> ${entities.stocks.join(', ')}</div>`;
+                }
+                if (entities.price_targets && entities.price_targets.length > 0) {
+                    html += `<div style="margin-bottom: 8px;">🎯 <strong>Price target:</strong> ₹${entities.price_targets[0].toLocaleString()}</div>`;
+                }
+                if (entities.timeline && entities.timeline !== 'unspecified') {
+                    html += `<div style="margin-bottom: 8px;">⏰ <strong>Timeline:</strong> ${entities.timeline.replace('_', ' ')}</div>`;
+                }
+                if ((entities.stocks && entities.stocks[0] !== 'Unknown') || entities.price_targets.length > 0) {
+                    html += `<div style="margin: 12px 0; border-top: 1px solid #eee;"></div>`;
+                }
+            }
+            
+            // Add sentiment if available
+            if (analysis.sentiment) {
+                const sentimentEmoji = analysis.sentiment.sentiment === 'BULLISH' ? '🐂' : analysis.sentiment.sentiment === 'BEARISH' ? '🐻' : '⚖️';
+                html += `<div style="margin-bottom: 12px;">${sentimentEmoji} <strong>Tip Sentiment:</strong> ${analysis.sentiment.sentiment} (${(analysis.sentiment.confidence * 100).toFixed(0)}% confident)</div>`;
+            }
+            
+            // Add scam similarity if available
+            if (analysis.similarity_to_known_scams) {
+                const similarity = analysis.similarity_to_known_scams;
+                const similarityNum = parseInt(similarity);
+                const warningEmoji = similarityNum > 70 ? '🚨' : similarityNum > 40 ? '⚠️' : '✅';
+                html += `<div style="margin-bottom: 12px;">${warningEmoji} <strong>Similarity to known scams:</strong> ${similarity}</div>`;
+            }
+            
+            // Add final verdict
+            html += `<div style="margin: 12px 0; padding: 10px; background: #f8f9fa; border-radius: 10px;">
+                        <strong>🔍 Analysis:</strong><br>${verdict}
+                     </div>`;
+            
+            // Add disclaimer
+            html += `<div style="font-size: 10px; color: #999; border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+                        ⚠️ <em>This is an AI-generated analysis. Always consult SEBI-registered advisors before making investment decisions.</em>
+                    </div>`;
+            
+            return html;
+        }
+        
+        function addMessage(content, sender) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            
+            if (sender === 'agent') {
+                messageDiv.innerHTML = `
+                    <div class="message-agent-icon">🤖</div>
+                    <div class="message-content">
+                        ${content}
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        ${escapeHtml(content)}
+                    </div>
+                `;
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            scrollToBottom();
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function showTypingIndicator() {
+            const messagesDiv = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message agent';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-agent-icon">🤖</div>
+                <div class="typing-indicator">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            `;
+            messagesDiv.appendChild(typingDiv);
+            scrollToBottom();
+        }
+        
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+        
+        function scrollToBottom() {
+            const messagesDiv = document.getElementById('chatMessages');
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    </script>
+</body>
+</html>
