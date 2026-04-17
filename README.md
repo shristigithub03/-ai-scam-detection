@@ -225,9 +225,7 @@ REACT_APP_HF_API_KEY=your_huggingface_api_key
 
 ---
 
-## 🎥 Demo Video
 
-(Add your demo link here)
 
 ---
 
